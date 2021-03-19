@@ -10,7 +10,10 @@ export function addEventListener (event) {
   if (!socket) {
     initialise()
   }
-  socket.on(event.type, event.callback)
+  socket.on(event.type, msg => {
+    console.log(msg.description)
+    event.callback(msg)
+  })
 }
 
 export function sendEvent (event, msg) {

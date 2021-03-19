@@ -25,7 +25,35 @@ export default {
   name: 'PageIndex',
   data () {
     return {
+      game: {
+        players: {
+        },
+        board: {
+          id: '',
+          questions: [],
+        },
+        buzzer: {
+          buzzed: [],
+          unlocked: false
+        },
+        state: {
+          question: {}
+        }
+      }
 
+    }
+  },
+  methods: {
+    newPlayer: function(player) {
+      this.game.players[player] = {
+        score: 0,
+        avatar: '',
+        connected: true
+      }
+      this.getAvatar(player)
+    },
+    getAvatar: function(player) {
+      if (!this.game.players[player]) console.log('Player does not exist locally, checking server')
     }
   },
   components: {
@@ -43,10 +71,35 @@ export default {
       }
     })
     console.log('Joined Game')
+
+    // Another player joins the game
     socketio.addEventListener({
       type: 'player-join',
       callback: (msg) => {
-        console.log(msg)
+        if (!this.game.players[msg.player]) this.newPlayer(msg.player)
+        else this.reconnectPlayer(msg.player)
+      }
+    })
+
+    // Another player leaves the game
+    socketio.addEventListener({
+      type: 'player-leave',
+      callback: (msg) => {
+
+      }
+    })
+
+    socketio.addEventListener({
+      type: '',
+      callback: (msg) => {
+        
+      }
+    })
+
+    socketio.addEventListener({
+      type: '',
+      callback: (msg) => {
+        
       }
     })
     console.log('Created event listener for other players')
