@@ -30,7 +30,7 @@ export default {
         },
         board: {
           id: '',
-          questions: [],
+          questions: {}
         },
         buzzer: {
           buzzed: [],
@@ -44,16 +44,26 @@ export default {
     }
   },
   methods: {
-    newPlayer: function(player) {
+    newPlayer: function (player) {
       this.game.players[player] = {
         score: 0,
         avatar: '',
         connected: true
       }
-      this.getAvatar(player)
+      this.refreshPlayer(player)
     },
-    getAvatar: function(player) {
-      if (!this.game.players[player]) console.log('Player does not exist locally, checking server')
+    refreshPlayer: function (player) {
+      console.log('Sending request to refresh ' + player)
+
+      // Send request to the server
+      // Player = the username of the player being refreshed
+      socketio.sendEvent({
+        type: 'refresh-player',
+        data: {
+          uuid: this.$stpre.user.uuid,
+          player: player
+        }
+      })
     }
   },
   components: {
@@ -89,17 +99,19 @@ export default {
       }
     })
 
+    // Another player is updated on the server
     socketio.addEventListener({
-      type: '',
+      type: 'player-updated',
       callback: (msg) => {
-        
+        if (!this.game.players[msg.player.username]) this.newPlayer(msg.player.username)
+        this.game.players[msg.player.username] = msg.player
       }
     })
 
     socketio.addEventListener({
       type: '',
       callback: (msg) => {
-        
+
       }
     })
     console.log('Created event listener for other players')
