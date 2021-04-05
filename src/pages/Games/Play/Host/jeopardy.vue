@@ -35,7 +35,8 @@ export default {
   created () {
     // Make sure the user has selected a name, if not: redirect
     if (!this.$store.state.jeopardy.user.username) {
-      this.$router.push('/username')
+      this.$router.push({ path: '/username', query: { from: this.$route.path } })
+      return
     }
 
     // Create web sockets

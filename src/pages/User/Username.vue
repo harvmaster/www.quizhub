@@ -3,9 +3,9 @@
     <div class="user-div">
       <div class="inner-container">
         <q-img style="max-width: 75%;" src="https://compote.slate.com/images/697b023b-64a5-49a0-8059-27b963453fb1.gif" img-class="my-img" @click="openAvatarSelect" />
-        <q-input class="full-width" label="Username" v-model="$store.state.jeopardy.user.username"/>
+        <q-input class="full-width" label="Username" v-model="user.username"/>
       </div>
-      <q-btn flat label="save" class="fit dark-button" color="black" rounded />
+      <q-btn flat label="save" class="fit dark-button" color="black" rounded @click="save"/>
     </div>
     <avatar-select ref="avatarSelect"/>
   </q-page>
@@ -63,10 +63,21 @@ export default {
   components: {
     AvatarSelect
   },
+  data () {
+    return {
+      user: {
+        username: ''
+      }
+    }
+  },
   methods: {
 
     openAvatarSelect: function () {
       this.$refs.avatarSelect.toggleVisible()
+    },
+    save: function () {
+      this.$store.commit('jeopardy/setUsername', { username: this.user.username })
+      this.$router.push(this.$route.query.from)
     }
   }
 }
